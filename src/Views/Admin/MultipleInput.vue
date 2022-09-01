@@ -276,6 +276,29 @@
               </small>
             </div>
 
+            <div class="form-group">
+              <label for="tx-payment" class="font-bold fsz-14">
+                Nama Account <span class="red">*</span>
+              </label>
+              <multiselect
+                id="tx-payment"
+                v-model="$v.addForm.account_id.$model"
+                :options="dataAccount.map((pay) => pay.id)"
+                :custom-label="
+                  (opt) => dataAccount.find((x) => x.id == opt).name
+                "
+                placeholder="Pilih nama akun"
+                :class="{
+                  invalid: $v.addForm.account_id.$error,
+                  'multiselect-custom': !$v.addForm.account_id.$error,
+                }"
+                :disabled="isDisabled"
+              ></multiselect>
+              <small v-if="$v.addForm.account_id.$error" class="red">
+                Akun pembayaran tidak boleh kosong
+              </small>
+            </div>
+
             <b-form-group
               label="Deskripsi"
               label-for="mass-desc"
@@ -469,6 +492,7 @@ export default {
     dataUsers: [],
     dataBalances: [],
     dataPayments: [],
+    dataAccount: [],
     dataCategories: [],
     dataGroups: [],
     dataCategoriesFiltered: [],
@@ -506,6 +530,7 @@ export default {
       contact: "",
       contact_name: "",
       balance_id: "",
+      account_id: "",
       payment_id: "",
       description: "",
       note: "",
@@ -538,6 +563,7 @@ export default {
       contact_name: { required },
       balance_id: { required },
       payment_id: { required },
+      account_id: { required },
       description: { required },
       note: { required },
       media: {},
@@ -558,6 +584,17 @@ export default {
         .get(`inputs?size=99999`)
         .then((res) => {
           this.dataInputs = res.data.items;
+        })
+        .catch((err) => {
+          console(err);
+          alert(err);
+        });
+    },
+    fetchAccounts() {
+      this.$api
+        .get(`accounts?size=99999`)
+        .then((res) => {
+          this.dataAccount = res.data.items;
         })
         .catch((err) => {
           console(err);
@@ -755,6 +792,7 @@ export default {
             media: "",
             name: this.addForm.name,
             payment_id: this.addForm.payment_id,
+            account_id: this.addForm.account_id,
             tax: 0,
             tax_type: 0,
             type: "Mass",
@@ -896,6 +934,7 @@ export default {
     this.fetchGroups();
     this.fetchInput();
     this.fetchPayments();
+    this.fetchAccounts();
     this.fetchBalances();
     this.fetchCategories();
   },

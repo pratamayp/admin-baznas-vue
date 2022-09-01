@@ -732,7 +732,7 @@ export default {
         balance_id: data.balance_id,
         payment_id: data.payment_id,
         account_id: data.account_id,
-        description: "Deskripsi",
+        description: data.description,
         note: data.note,
       };
       // this.level = data.category.level;
